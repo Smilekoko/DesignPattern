@@ -22,3 +22,7 @@ target/
 disconf/
 logs/
 /NewInnerAPI/
+
+/app/build
+/.gradle
+
