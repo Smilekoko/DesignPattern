@@ -43,7 +43,7 @@ import java.util.Arrays
  */
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
-    private val patterns = arrayOf<String?>(
+    private val patterns = arrayOf(
         "观察者模式", "工厂模式",
         "单例设计模式", "策略模式",
         "适配器模式", "命令模式",
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         "备忘录模式", "解释器模式",
         "责任链模式", "访问者模式"
     )
-    private val classes = arrayOf<Class<*>?>(
+    private val classes = arrayOf<Class<*>>(
         ObserverActivity::class.java, FactoryActivity::class.java,
         SingletonActivity::class.java, StrategyActivity::class.java,
         AdapterActivity::class.java, CommandActivity::class.java,
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         initView()
     }
 
@@ -81,16 +81,12 @@ class MainActivity : AppCompatActivity() {
         val gridLayoutManager = GridLayoutManager(this, 2)
         binding!!.recyclerView.setLayoutManager(gridLayoutManager)
         binding!!.recyclerView.addItemDecoration(GridSpaceItemDecoration(10).setEndFromSize(0))
-        binding!!.recyclerView.setAdapter(object : BaseRecyclerAdapter<String?>(R.layout.item_main, Arrays.asList<String?>(*patterns)) {
-            override fun bindView(holder: BaseByViewHolder<String?>?, bean: String?, position: Int) {
-                holder?.setText(R.id.bt_button, title)
+        binding!!.recyclerView.setAdapter(object : BaseRecyclerAdapter<String>(R.layout.item_main, patterns.toList()) {
+            override fun bindView(holder: BaseByViewHolder<String>, bean: String, position: Int) {
+                holder.setText(R.id.bt_button, bean)
             }
         })
-        binding!!.recyclerView.setOnItemClickListener(object : ByRecyclerView.OnItemClickListener {
-            override fun onClick(v: View, position: Int) {
-                startActivity(Intent(v.getContext(), classes[position]))
-            }
-        })
+        binding!!.recyclerView.setOnItemClickListener { v, position -> startActivity(Intent(v.getContext(), classes[position])) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
