@@ -1,21 +1,19 @@
-package com.example.jingbin.designpattern.facade;
+package com.example.jingbin.designpattern.facade
 
-import android.os.Bundle;
-import android.view.View;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
-import com.example.jingbin.designpattern.R;
-import com.example.jingbin.designpattern.app.AppConstant;
-import com.example.jingbin.designpattern.app.EMTagHandler;
-import com.example.jingbin.designpattern.databinding.ActivityFacadeBinding;
-import com.example.jingbin.designpattern.facade.device.Computer;
-import com.example.jingbin.designpattern.facade.device.Light;
-import com.example.jingbin.designpattern.facade.device.Player;
-import com.example.jingbin.designpattern.facade.device.PopcornPopper;
-import com.example.jingbin.designpattern.facade.device.Projector;
-import com.example.jingbin.designpattern.facade.theater.HomeTheaterFacade;
+import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import com.example.jingbin.designpattern.R
+import com.example.jingbin.designpattern.app.AppConstant
+import com.example.jingbin.designpattern.app.EMTagHandler
+import com.example.jingbin.designpattern.databinding.ActivityFacadeBinding
+import com.example.jingbin.designpattern.facade.device.Computer
+import com.example.jingbin.designpattern.facade.device.Light
+import com.example.jingbin.designpattern.facade.device.Player
+import com.example.jingbin.designpattern.facade.device.PopcornPopper
+import com.example.jingbin.designpattern.facade.device.Projector
+import com.example.jingbin.designpattern.facade.theater.HomeTheaterFacade
 
 /**
  * 外观模式:
@@ -35,47 +33,40 @@ import com.example.jingbin.designpattern.facade.theater.HomeTheaterFacade;
  * 尼玛，花了一笔钱，看电影还要这么多的步骤，太累了，而且看完还要一个一个关掉。
  * 所有，我们使用外观模式解决这些复杂的步骤，轻松享受电影：
  */
-public class FacadeActivity extends AppCompatActivity implements View.OnClickListener {
+class FacadeActivity : AppCompatActivity(), View.OnClickListener {
+    private var homeTheaterFacade: HomeTheaterFacade? = null
 
-    private HomeTheaterFacade homeTheaterFacade;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val binding = DataBindingUtil.setContentView<ActivityFacadeBinding>(this, R.layout.activity_facade)
+        setTitle("外观模式")
+        binding.tvDefine.setText(EMTagHandler.fromHtml(AppConstant.FACADE_DEFINE))
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ActivityFacadeBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_facade);
-        setTitle("外观模式");
-        binding.tvDefine.setText(EMTagHandler.fromHtml(AppConstant.FACADE_DEFINE));
-
-        binding.btFacade.setOnClickListener(this);
-        binding.btOpen.setOnClickListener(this);
-        binding.btClose.setOnClickListener(this);
+        binding.btFacade.setOnClickListener(this)
+        binding.btOpen.setOnClickListener(this)
+        binding.btClose.setOnClickListener(this)
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.bt_facade:// 外观模式
-                Computer computer = new Computer();
-                Light light = new Light();
-                Player player = new Player();
-                PopcornPopper popcornPopper = new PopcornPopper();
-                Projector projector = new Projector();
-                homeTheaterFacade = new HomeTheaterFacade(computer, light, player, popcornPopper, projector);
-                break;
+    override fun onClick(v: View) {
+        when (v.getId()) {
+            R.id.bt_facade -> {
+                val computer = Computer()
+                val light = Light()
+                val player = Player()
+                val popcornPopper = PopcornPopper()
+                val projector = Projector()
+                homeTheaterFacade = HomeTheaterFacade(computer, light, player, popcornPopper, projector)
+            }
 
-            case R.id.bt_open:// 一键观影
-                if (homeTheaterFacade != null) {
-                    homeTheaterFacade.watchMovie();
-                }
-                break;
+            R.id.bt_open -> if (homeTheaterFacade != null) {
+                homeTheaterFacade!!.watchMovie()
+            }
 
-            case R.id.bt_close:// 一键关闭
-                if (homeTheaterFacade != null) {
-                    homeTheaterFacade.stopMovie();
-                }
-                break;
-            default:
-                break;
+            R.id.bt_close -> if (homeTheaterFacade != null) {
+                homeTheaterFacade!!.stopMovie()
+            }
+
+            else -> {}
         }
     }
 }

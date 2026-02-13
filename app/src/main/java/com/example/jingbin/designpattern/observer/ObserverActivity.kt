@@ -1,21 +1,19 @@
-package com.example.jingbin.designpattern.observer;
+package com.example.jingbin.designpattern.observer
 
-import android.os.Bundle;
-import android.view.View;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
-import com.example.jingbin.designpattern.R;
-import com.example.jingbin.designpattern.app.AppConstant;
-import com.example.jingbin.designpattern.app.EMTagHandler;
-import com.example.jingbin.designpattern.databinding.ActivityObserverBinding;
-import com.example.jingbin.designpattern.observer.classs.ObjectFor3D;
-import com.example.jingbin.designpattern.observer.classs.ObserverUser1;
-import com.example.jingbin.designpattern.observer.classs.ObserverUser2;
-import com.example.jingbin.designpattern.observer.javautil.Observer1;
-import com.example.jingbin.designpattern.observer.javautil.SubjectFor3d;
-import com.example.jingbin.designpattern.observer.javautil.SubjectForSSQ;
+import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import com.example.jingbin.designpattern.R
+import com.example.jingbin.designpattern.app.AppConstant
+import com.example.jingbin.designpattern.app.EMTagHandler
+import com.example.jingbin.designpattern.databinding.ActivityObserverBinding
+import com.example.jingbin.designpattern.observer.classs.ObjectFor3D
+import com.example.jingbin.designpattern.observer.classs.ObserverUser1
+import com.example.jingbin.designpattern.observer.classs.ObserverUser2
+import com.example.jingbin.designpattern.observer.javautil.Observer1
+import com.example.jingbin.designpattern.observer.javautil.SubjectFor3d
+import com.example.jingbin.designpattern.observer.javautil.SubjectForSSQ
 
 /**
  * 可以看出，使用Java内置的类实现观察者模式，代码非常简洁，
@@ -29,74 +27,68 @@ import com.example.jingbin.designpattern.observer.javautil.SubjectForSSQ;
  * 接口是无法实现代码复用的，而且也没有办法使用组合的模式实现这三个方法的复用，
  * 所以我觉得这里把这三个方法在类中实现是合理的。
  */
-public class ObserverActivity extends AppCompatActivity implements View.OnClickListener {
+class ObserverActivity : AppCompatActivity(), View.OnClickListener {
+    private var objectFor3D: ObjectFor3D? = null
+    private var observerUser1: ObserverUser1? = null
+    private var observerUser2: ObserverUser2? = null
 
-    private ObjectFor3D objectFor3D;
-    private ObserverUser1 observerUser1;
-    private ObserverUser2 observerUser2;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val binding = DataBindingUtil.setContentView<ActivityObserverBinding>(this, R.layout.activity_observer)
+        setTitle("观察者模式")
+        binding.tvDefine.setText(EMTagHandler.fromHtml(AppConstant.OBSERVER_DEFINE))
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ActivityObserverBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_observer);
-        setTitle("观察者模式");
-        binding.tvDefine.setText(EMTagHandler.fromHtml(AppConstant.OBSERVER_DEFINE));
-
-        binding.btMyself.setOnClickListener(this);
-        binding.btSystem.setOnClickListener(this);
+        binding.btMyself.setOnClickListener(this)
+        binding.btSystem.setOnClickListener(this)
     }
 
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.bt_myself:// 自己实现的3D服务号
+    override fun onClick(v: View) {
+        when (v.getId()) {
+            R.id.bt_myself -> {
                 // 创建服务号
-                objectFor3D = new ObjectFor3D();
+                objectFor3D = ObjectFor3D()
 
                 // 创建两个订阅者
-                observerUser1 = new ObserverUser1(objectFor3D);
-                observerUser2 = new ObserverUser2(objectFor3D);
+                observerUser1 = ObserverUser1(objectFor3D)
+                observerUser2 = ObserverUser2(objectFor3D)
 
                 // 两个观察者,发送两条信息
-                objectFor3D.setMsg("201610121 的3D号为:127");
-                objectFor3D.setMsg("20161022 的3D号为:000");
-                break;
-            case R.id.bt_system://使用Java内置的类实现观察者模式
-                loadSystemObserver();
-                break;
-            default:
-                break;
+                objectFor3D!!.setMsg("201610121 的3D号为:127")
+                objectFor3D!!.setMsg("20161022 的3D号为:000")
+            }
+
+            R.id.bt_system -> loadSystemObserver()
+            else -> {}
         }
     }
 
     /**
      * 系统的观察者接口
      */
-    private void loadSystemObserver() {
+    private fun loadSystemObserver() {
         // 创建2个服务号
-        SubjectFor3d subjectFor3d = new SubjectFor3d();//3d
-        SubjectForSSQ subjectForSSQ = new SubjectForSSQ();//双色球
+        val subjectFor3d = SubjectFor3d() //3d
+        val subjectForSSQ = SubjectForSSQ() //双色球
 
         // 创建订阅者
-        Observer1 observer1 = new Observer1();
-        observer1.registerSubject(subjectFor3d);
-        observer1.registerSubject(subjectForSSQ);
+        val observer1 = Observer1()
+        observer1.registerSubject(subjectFor3d)
+        observer1.registerSubject(subjectForSSQ)
 
         // 发送信息
-        subjectFor3d.setMsg("hello 3d'nums : 110 ");
-        subjectForSSQ.setMsg("ssq'nums : 12,13,31,5,4,3 15");
+        subjectFor3d.setMsg("hello 3d'nums : 110 ")
+        subjectForSSQ.setMsg("ssq'nums : 12,13,31,5,4,3 15")
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
+    override fun onStop() {
+        super.onStop()
         if (observerUser1 != null) {
-            objectFor3D.removeObserver(observerUser1);
+            objectFor3D!!.removeObserver(observerUser1)
         }
         if (observerUser2 != null) {
-            objectFor3D.removeObserver(observerUser2);
+            objectFor3D!!.removeObserver(observerUser2)
         }
-        objectFor3D = null;
+        objectFor3D = null
     }
 }

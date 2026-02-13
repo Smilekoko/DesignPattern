@@ -1,21 +1,19 @@
-package com.example.jingbin.designpattern.decorator;
+package com.example.jingbin.designpattern.decorator
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
-import com.example.jingbin.designpattern.R;
-import com.example.jingbin.designpattern.app.AppConstant;
-import com.example.jingbin.designpattern.app.EMTagHandler;
-import com.example.jingbin.designpattern.databinding.ActivityDecoratorBinding;
-import com.example.jingbin.designpattern.decorator.equip.RingEquip;
-import com.example.jingbin.designpattern.decorator.equip.ShoeEquip;
-import com.example.jingbin.designpattern.decorator.gem.BlueGemDecorator;
-import com.example.jingbin.designpattern.decorator.gem.RedGemDecorator;
-import com.example.jingbin.designpattern.decorator.gem.YellowGemDecorator;
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import com.example.jingbin.designpattern.R
+import com.example.jingbin.designpattern.app.AppConstant
+import com.example.jingbin.designpattern.app.EMTagHandler
+import com.example.jingbin.designpattern.databinding.ActivityDecoratorBinding
+import com.example.jingbin.designpattern.decorator.equip.RingEquip
+import com.example.jingbin.designpattern.decorator.equip.ShoeEquip
+import com.example.jingbin.designpattern.decorator.gem.BlueGemDecorator
+import com.example.jingbin.designpattern.decorator.gem.RedGemDecorator
+import com.example.jingbin.designpattern.decorator.gem.YellowGemDecorator
 
 /**
  * 装饰者模式:
@@ -28,45 +26,40 @@ import com.example.jingbin.designpattern.decorator.gem.YellowGemDecorator;
  * 2、蓝宝石（攻击力5/颗）、黄宝石（攻击力10/颗）、红宝石（攻击力15/颗）
  * 3、每个装备可以随意镶嵌3颗
  */
-public class DecoratorActivity extends AppCompatActivity implements View.OnClickListener {
+class DecoratorActivity : AppCompatActivity(), View.OnClickListener {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val binding = DataBindingUtil.setContentView<ActivityDecoratorBinding>(this, R.layout.activity_decorator)
+        setTitle("装饰者模式")
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ActivityDecoratorBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_decorator);
-        setTitle("装饰者模式");
+        binding.tvDefine.setText(EMTagHandler.fromHtml(AppConstant.DECORATOR_DEFINE))
+        binding.btDemo1.setText("一个镶嵌2颗红宝石,1颗蓝宝石的靴子")
+        binding.btDemo2.setText("一个镶嵌1颗红宝石,1颗蓝宝石,1颗黄宝石的戒指")
 
-        binding.tvDefine.setText(EMTagHandler.fromHtml(AppConstant.DECORATOR_DEFINE));
-        binding.btDemo1.setText("一个镶嵌2颗红宝石,1颗蓝宝石的靴子");
-        binding.btDemo2.setText("一个镶嵌1颗红宝石,1颗蓝宝石,1颗黄宝石的戒指");
-
-        binding.btDecorator.setOnClickListener(this);
-        binding.btDemo1.setOnClickListener(this);
-        binding.btDemo2.setOnClickListener(this);
+        binding.btDecorator.setOnClickListener(this)
+        binding.btDemo1.setOnClickListener(this)
+        binding.btDemo2.setOnClickListener(this)
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.bt_decorator:// 外观模式
-                break;
+    override fun onClick(v: View) {
+        when (v.getId()) {
+            R.id.bt_decorator -> {}
+            R.id.bt_demo1 -> {
+                Log.e("---", "一个镶嵌2颗红宝石,1颗蓝宝石的靴子: ")
 
-            case R.id.bt_demo1:
-                Log.e("---", "一个镶嵌2颗红宝石,1颗蓝宝石的靴子: ");
+                val iEquip: IEquip = RedGemDecorator(RedGemDecorator(BlueGemDecorator(ShoeEquip())))
+                Log.e("---", "攻击力:" + iEquip.caculateAttack())
+                Log.e("---", "描述语:" + iEquip.description())
+            }
 
-                IEquip iEquip = new RedGemDecorator(new RedGemDecorator(new BlueGemDecorator(new ShoeEquip())));
-                Log.e("---", "攻击力:" + iEquip.caculateAttack());
-                Log.e("---", "描述语:" + iEquip.description());
-                break;
+            R.id.bt_demo2 -> {
+                Log.e("---", "一个镶嵌1颗红宝石,1颗蓝宝石,1颗黄宝石的戒指: ")
+                val redGemDecorator = RedGemDecorator(BlueGemDecorator(YellowGemDecorator(RingEquip())))
+                Log.e("---", "攻击力:" + redGemDecorator.caculateAttack())
+                Log.e("---", "描述语:" + redGemDecorator.description())
+            }
 
-            case R.id.bt_demo2:
-                Log.e("---", "一个镶嵌1颗红宝石,1颗蓝宝石,1颗黄宝石的戒指: ");
-                RedGemDecorator redGemDecorator = new RedGemDecorator(new BlueGemDecorator(new YellowGemDecorator(new RingEquip())));
-                Log.e("---", "攻击力:" + redGemDecorator.caculateAttack());
-                Log.e("---", "描述语:" + redGemDecorator.description());
-                break;
-            default:
-                break;
+            else -> {}
         }
     }
 }
